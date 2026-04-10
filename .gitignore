@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Security - Environment Enforcements
+.env
+.env.*.local
+scripts/encrypt-env.ts
+
