@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import { prisma } from "@/lib/prisma";
 import { 
   Users, 
@@ -15,7 +18,6 @@ import VisitsChart from "@/components/analytics/VisitsChart";
 import DevicesChart from "@/components/analytics/DevicesChart";
 import ClicksChart from "@/components/analytics/ClicksChart";
 
-export const dynamic = "force-dynamic";
 
 export default async function AnalyticsPage() {
   const now = new Date();

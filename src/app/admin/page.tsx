@@ -1,5 +1,9 @@
 "use client";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+
 import Link from "next/link";
 import { Plus, FolderKanban, ShieldAlert, BarChart3, ExternalLink, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";

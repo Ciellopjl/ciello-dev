@@ -1,27 +1,28 @@
-import { auth } from "@/lib/auth-edge";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+import { getToken } from 'next-auth/jwt'
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const session = req.auth;
+export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl
 
-  if (pathname.startsWith("/admin")) {
-    if (!session?.user) {
-      return NextResponse.redirect(new URL("/login", req.url));
+  if (pathname.startsWith('/admin')) {
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    })
+
+    if (!token) {
+      return NextResponse.redirect(new URL('/login', req.url))
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL;
-    if (session.user.email !== adminEmail) {
-      return NextResponse.redirect(new URL("/unauthorized", req.url));
+    if (token.email !== process.env.ADMIN_EMAIL) {
+      return NextResponse.redirect(new URL('/blocked', req.url))
     }
   }
 
-  return NextResponse.next();
-});
+  return NextResponse.next()
+}
 
 export const config = {
-  matcher: [
-    "/admin/:path*",
-    "/((?!api|_next/static|_next/image|favicon.ico).*)",
-  ],
-};
+  matcher: ['/admin/:path*'],
+}

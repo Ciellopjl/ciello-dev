@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 import Navbar from "@/components/layout/Navbar";
 import Hero from "@/components/sections/HeroSection";
 import About from "@/components/sections/AboutSection";
@@ -6,7 +9,6 @@ import Projects from "@/components/sections/ProjectsSection";
 import Contact from "@/components/sections/ContactSection";
 import Footer from "@/components/layout/Footer";
 
-export const dynamic = "force-dynamic";
 
 export default function Home() {
   return (
