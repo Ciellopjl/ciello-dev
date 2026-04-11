@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth-edge";
 import { NextResponse } from "next/server";
 
-export const middleware = auth((req) => {
+export default auth((req) => {
   const { pathname } = req.nextUrl;
   const session = req.auth;
 
