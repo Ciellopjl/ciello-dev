@@ -6,6 +6,8 @@ import Projects from "@/components/sections/ProjectsSection";
 import Contact from "@/components/sections/ContactSection";
 import Footer from "@/components/layout/Footer";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-background selection:bg-brand-primary/30 selection:text-white">
