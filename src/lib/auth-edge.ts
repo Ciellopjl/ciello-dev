@@ -4,6 +4,7 @@ import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
 
 const authConfig: NextAuthConfig = {
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   providers: [], // providers not needed in middleware — only JWT validation
   session: { strategy: "jwt" },
   pages: {

@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
   // Use Prisma to persist sessions and accounts
   adapter: PrismaAdapter(prisma),
 
