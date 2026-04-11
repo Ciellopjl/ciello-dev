@@ -1,5 +1,3 @@
-"use client";
-
 import ProjectForm from "@/components/projects/ProjectForm";
 
 export const metadata = {
