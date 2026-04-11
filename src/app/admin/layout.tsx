@@ -26,14 +26,32 @@ export default async function AdminLayout({
   if (session.user.email !== ADMIN_EMAIL) redirect("/unauthorized");
 
   return (
-    <div className="flex flex-col min-h-screen bg-black">
-      <div className="sticky top-0 z-50 md:fixed md:w-64 md:h-screen md:top-0 md:left-0">
+    <div style={{ minHeight: '100vh', backgroundColor: '#000', color: '#fff' }}>
+      
+      {/* Sidebar Wrapper */}
+      <div 
+        className="w-full md:w-64 z-50 sticky top-0 md:fixed md:top-0 md:left-0 md:h-screen" 
+        style={{ 
+          backgroundColor: '#0a0a0a', 
+          borderRight: '1px solid #27272a' 
+        }}
+      >
         <AdminSidebar />
       </div>
 
-      <main className="flex-1 flex flex-col w-full md:ml-64 min-h-screen overflow-x-hidden p-4 md:p-8">
-        {children}
-      </main>
+      {/* Container Principal */}
+      <div className="w-full md:pl-64" style={{ minHeight: '100vh' }}>
+        <main 
+          style={{ 
+            display: 'block',
+            padding: '24px', 
+            margin: 0, 
+            width: '100%' 
+          }}
+        >
+          {children}
+        </main>
+      </div>
 
       <Toaster
         theme="dark"
