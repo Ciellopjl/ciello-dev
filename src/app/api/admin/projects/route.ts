@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -7,10 +7,10 @@ export const dynamic = "force-dynamic";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
-// ─── Auth Guard Helper ────────────────────────────────────────────────────────
-async function requireAdmin() {
+// ─── Auth Guard ──────────────────────────────────────────────────────────────
+async function checkAuth() {
   const session = await auth();
-  if (!session?.user || session.user.email !== ADMIN_EMAIL) {
+  if (!session || session.user?.email !== ADMIN_EMAIL) {
     return null;
   }
   return session;
@@ -18,9 +18,9 @@ async function requireAdmin() {
 
 // GET /api/admin/projects — Lists ALL projects (published + drafts)
 export async function GET() {
-  const session = await requireAdmin();
+  const session = await checkAuth();
   if (!session) {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 
   try {
@@ -39,9 +39,9 @@ export async function GET() {
 
 // POST /api/admin/projects — Creates a new project
 export async function POST(request: Request) {
-  const session = await requireAdmin();
+  const session = await checkAuth();
   if (!session) {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 
   try {

@@ -26,7 +26,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     // Restringe o acesso (Login) apenas ao email do dono do portfólio
     async signIn({ user }) {
-      if (user.email !== ADMIN_EMAIL && user.email !== "ciellodev@gmail.com") {
+      const email = user.email?.trim().toLowerCase();
+      const adminEmail = ADMIN_EMAIL?.trim().toLowerCase();
+      
+      console.log(`[AUTH DEBUG] Attempt: ${email} | Admin: ${adminEmail}`);
+      
+      if (!email || email !== adminEmail) {
+        console.warn(`[AUTH] Login negado para: ${email}`);
         return false; // Bloqueia imediatamente o login de terceiros
       }
       return true; // Permite o login

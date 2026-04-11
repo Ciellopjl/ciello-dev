@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PROJECTS } from "../src/constants";
+import { PROJECTS } from "../src/constants/projects";
 import fs from "fs";
 import path from "path";
 

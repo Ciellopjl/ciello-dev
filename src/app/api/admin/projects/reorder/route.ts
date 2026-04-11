@@ -1,21 +1,22 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
-async function requireAdmin() {
+// ─── Auth Guard ──────────────────────────────────────────────────────────────
+async function checkAuth() {
   const session = await auth();
-  if (!session?.user || session.user.email !== ADMIN_EMAIL) return null;
+  if (!session || session.user?.email !== ADMIN_EMAIL) return null;
   return session;
 }
 
 // PUT /api/admin/projects/reorder — Receives { items: { id: string, order: number }[] }
 export async function PUT(request: Request) {
-  const session = await requireAdmin();
+  const session = await checkAuth();
   if (!session) {
-    return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
+    return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 
   try {

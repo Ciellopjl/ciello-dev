@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import AdminSidebar from "@/components/admin/AdminSidebar";
 import { Toaster } from "sonner";
+import AdminSidebar from "@/components/layout/AdminSidebar";
+import { APP_ROUTES } from "@/constants/routes";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
@@ -18,13 +19,13 @@ export default async function AdminLayout({
   const session = await auth();
 
   // Guard: unauthenticated → login, non-admin → unauthorized
-  if (!session?.user) redirect("/login");
+  if (!session?.user) redirect(APP_ROUTES.auth.login);
   if (session.user.email !== ADMIN_EMAIL) redirect("/unauthorized");
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen md:h-screen bg-black overflow-x-hidden">
+    <div className="flex flex-col md:flex-row min-h-screen bg-black">
       <AdminSidebar />
-      <main className="flex-1 w-full overflow-y-auto p-4 md:p-8">
+      <main className="flex-1 overflow-x-hidden p-4 md:p-8">
         {children}
       </main>
 

@@ -83,3 +83,30 @@ model VerificationToken {
 
   @@unique([identifier, token])
 }
+
+// ─── Security Monitor ─────────────────────────────────────────────────────────
+model BlockedAttempt {
+  id        String   @id @default(cuid())
+  email     String
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+// ─── Custom Analytics ──────────────────────────────────────────────────────────
+model PageView {
+  id        String   @id @default(cuid())
+  page      String
+  country   String?
+  city      String?
+  device    String?  // mobile | desktop | tablet
+  browser   String?
+  referrer  String?  // de onde veio (google, instagram, etc)
+  createdAt DateTime @default(now())
+}
+
+model LinkClick {
+  id        String   @id @default(cuid())
+  link      String   // whatsapp | github | linkedin | projeto_X
+  createdAt DateTime @default(now())
+}

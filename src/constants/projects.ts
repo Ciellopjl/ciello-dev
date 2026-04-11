@@ -1,0 +1,36 @@
+export const PROJECTS = [
+  {
+    id: 1,
+    name: "Plataforma ENEM 2026",
+    description: "Plataforma EdTech completa com inteligência artificial, focada na preparação de alta performance para o ENEM. Inclui tutor inteligente, análise de desempenho e arquitetura escalável.",
+    highlights: [
+      "Tutor com IA (Gemini + Llama 3)",
+      "Dashboard de desempenho",
+      "Chat com suporte a imagens",
+      "Streaming de respostas em tempo real",
+      "Sistema de autenticação avançado",
+    ],
+    tech: ["Next.js", "TypeScript", "Tailwind CSS", "Prisma", "PostgreSQL", "NextAuth", "Vercel AI SDK"],
+    link: "https://plataforma-enem-lyart.vercel.app",
+    github: "#",
+    image: "/projects/enem.png",
+    featured: true,
+  },
+  {
+    id: 2,
+    name: "Silva Cílios",
+    description: "Sistema completo de agendamento com painel administrativo, integração com WhatsApp e gestão de serviços e equipe.",
+    highlights: [
+      "Agendamento inteligente",
+      "Painel admin",
+      "CRUD completo",
+      "Integração com WhatsApp",
+      "Mobile-first",
+    ],
+    tech: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Prisma ORM", "SQLite", "NextAuth"],
+    link: "https://www.silvacilios.com.br/",
+    github: "#",
+    image: "/projects/silva.png",
+    featured: true,
+  },
+];

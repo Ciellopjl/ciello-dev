@@ -1,4 +1,4 @@
-import ProjectForm from "@/components/admin/ProjectForm";
+import ProjectForm from "@/components/projects/ProjectForm";
 
 export const metadata = {
   title: "Novo Projeto · Admin",

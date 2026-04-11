@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import ProjectForm from "@/components/admin/ProjectForm";
+import ProjectForm from "@/components/projects/ProjectForm";
 
 export const metadata = {
   title: "Editar Projeto · Admin",

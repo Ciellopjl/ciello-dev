@@ -1,0 +1,122 @@
+"use client";
+
+import { useState } from "react";
+import { Plus, X, Trash2 } from "lucide-react";
+import { UploadDropzone } from "@/lib/uploadthing";
+import { toast } from "sonner";
+import type { ProjectFormData } from "@/types/project";
+
+interface ProjectFormFieldsProps {
+  form: ProjectFormData;
+  setForm: React.Dispatch<React.SetStateAction<ProjectFormData>>;
+}
+
+export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsProps) {
+  const [techInput, setTechInput] = useState("");
+  const [featureInput, setFeatureInput] = useState("");
+
+  function addTag(field: "techs" | "features", input: string, setInput: (v: string) => void) {
+    const value = input.trim();
+    if (!value) return;
+    if (!form[field].includes(value)) {
+      setForm((f) => ({ ...f, [field]: [...f[field], value] }));
+    }
+    setInput("");
+  }
+
+  function removeTag(field: "techs" | "features", value: string) {
+    setForm((f) => ({ ...f, [field]: f[field].filter((t) => t !== value) }));
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Basic Info */}
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 md:p-6 space-y-5">
+        <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Informações Básicas
+        </h2>
+        <div className="space-y-4">
+          <input
+            type="text"
+            required
+            value={form.title}
+            onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+            placeholder="Título do Projeto"
+            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50"
+          />
+          <textarea
+            required
+            rows={4}
+            value={form.description}
+            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+            placeholder="Descrição do projeto..."
+            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50 resize-none"
+          />
+        </div>
+      </div>
+
+      {/* Media */}
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 md:p-6 space-y-5">
+        <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Imagens & Mídia
+        </h2>
+        {form.imageUrl ? (
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 group">
+            <img src={form.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <button type="button" onClick={() => setForm((f) => ({ ...f, imageUrl: "" }))} className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-xl text-sm font-bold">
+                <Trash2 size={16} /> Remover
+              </button>
+            </div>
+          </div>
+        ) : (
+          <UploadDropzone
+            endpoint="imageUploader"
+            onClientUploadComplete={(res) => {
+              setForm((f) => ({ ...f, imageUrl: res[0].url }));
+              toast.success("Imagem enviada!");
+            }}
+            onUploadError={(error: Error) => { toast.error(error.message); }}
+          />
+        )}
+      </div>
+
+      {/* Techs & Features - Simplified for brevity in Fields component */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 space-y-4">
+            <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Tecnologias
+            </h2>
+            <div className="flex gap-2">
+              <input type="text" value={techInput} onChange={(e) => setTechInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag("techs", techInput, setTechInput))} className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm" placeholder="Adicionar..." />
+              <button type="button" onClick={() => addTag("techs", techInput, setTechInput)} className="p-2 bg-white/5 rounded-lg"><Plus size={16} /></button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {form.techs.map(t => (
+                <span key={t} className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs flex items-center gap-1.5">
+                  {t} <X size={10} className="cursor-pointer" onClick={() => removeTag("techs", t)} />
+                </span>
+              ))}
+            </div>
+         </div>
+         {/* Features */}
+         <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 space-y-4">
+            <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Funcionalidades
+            </h2>
+            <div className="flex gap-2">
+              <input type="text" value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag("features", featureInput, setFeatureInput))} className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm" placeholder="Adicionar..." />
+              <button type="button" onClick={() => addTag("features", featureInput, setFeatureInput)} className="p-2 bg-white/5 rounded-lg"><Plus size={16} /></button>
+            </div>
+            <div className="space-y-1">
+              {form.features.map(f => (
+                <div key={f} className="flex justify-between text-xs text-neutral-400 p-1 border-b border-white/5">
+                  {f} <X size={10} className="cursor-pointer hover:text-red-500" onClick={() => removeTag("features", f)} />
+                </div>
+              ))}
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+}
