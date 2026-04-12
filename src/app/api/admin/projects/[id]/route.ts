@@ -3,12 +3,12 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
-
 // ─── Auth Guard ──────────────────────────────────────────────────────────────
 async function checkAuth() {
   const session = await auth();
-  if (!session || session.user?.email !== ADMIN_EMAIL) return null;
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const sessionEmail = session?.user?.email?.trim().toLowerCase();
+  if (!session || !sessionEmail || sessionEmail !== adminEmail) return null;
   return session;
 }
 

@@ -64,7 +64,7 @@ export default function AdminDashboard() {
         {[
           { label: "Projetos", value: projects.length, icon: FolderKanban, color: "text-blue-500", bg: "bg-blue-500/10" },
           { label: "Tentativas Bloqueadas", value: blockedInfo.totalCount, icon: ShieldAlert, color: "text-red-500", bg: "bg-red-500/10" },
-          { label: "Visitas Totais", value: stats?.totalViews || 0, icon: BarChart3, color: "text-red-500", bg: "bg-red-500/10", href: APP_ROUTES.admin.analytics },
+          { label: "Visitas Totais", value: stats?.summary?.totalViews || 0, icon: BarChart3, color: "text-red-500", bg: "bg-red-500/10", href: APP_ROUTES.admin.analytics },
         ].map((stat) => (
           <div key={stat.label} className="relative group">
             {stat.href && <Link href={stat.href} className="absolute inset-0 z-10" />}

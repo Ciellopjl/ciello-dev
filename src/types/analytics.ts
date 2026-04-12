@@ -1,21 +1,23 @@
-export interface ViewsData {
-  date: string;
-  views: number;
-}
-
-export interface DevicesData {
+export interface DeviceData {
   name: string;
   value: number;
 }
 
-export interface LinksData {
-  name: string;
-  clicks: number;
+export interface RecentView {
+  id: string;
+  page: string;
+  device: string;
+  createdAt: string;
 }
 
 export interface AnalyticsSummary {
-  totalViews: number;
-  viewsByDay: ViewsData[];
-  deviceDistribution: DevicesData[];
-  topLinks: LinksData[];
+  summary: {
+    totalViews: number;
+    viewsToday: number;
+    totalClicks: number;
+    clicksToday: number;
+  };
+  devices: DeviceData[];
+  recentViews: RecentView[];
 }
+

@@ -30,20 +30,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       const email = user.email?.trim().toLowerCase();
       const adminEmail = ADMIN_EMAIL?.trim().toLowerCase();
       
-      console.log(`[AUTH DEBUG] Attempt: ${email} | Admin: ${adminEmail}`);
-      
-      if (!email || email !== adminEmail) {
-        console.warn(`[AUTH] Login negado para: ${email}`);
-        return false; // Bloqueia imediatamente o login de terceiros
+      if (!email || !adminEmail || email !== adminEmail) {
+        console.warn(`[SECURITY] Tentativa de login negada: ${email || "sem email"}`);
+        return false;
       }
-      return true; // Permite o login
+      return true;
     },
 
     // Add email and admin flag to the JWT token
     async jwt({ token, user }) {
       if (user) {
+        const adminEmail = ADMIN_EMAIL?.trim().toLowerCase();
         token.email = user.email;
-        token.isAdmin = user.email === ADMIN_EMAIL;
+        token.isAdmin = user.email?.trim().toLowerCase() === adminEmail;
       }
       return token;
     },

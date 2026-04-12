@@ -7,7 +7,9 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
 async function requireAdmin() {
   const session = await auth();
-  if (!session?.user || session.user.email !== ADMIN_EMAIL) return null;
+  const adminEmail = ADMIN_EMAIL?.trim().toLowerCase();
+  const sessionEmail = session?.user?.email?.trim().toLowerCase();
+  if (!session?.user || !sessionEmail || sessionEmail !== adminEmail) return null;
   return session;
 }
 

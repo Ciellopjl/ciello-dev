@@ -38,7 +38,7 @@ export default function SortableProjectRow({
           </button>
         </td>
         
-        <td className="py-4 px-4">
+        <td className="py-4 px-4 whitespace-nowrap">
           <Tooltip.Root>
             <Tooltip.Trigger asChild>
               <span className="font-semibold text-white cursor-help border-b border-dashed border-white/20 pb-0.5">{project.title}</span>
@@ -50,14 +50,14 @@ export default function SortableProjectRow({
                 className="z-50 bg-neutral-900 border border-white/10 p-3 rounded-xl shadow-2xl w-64 animate-in fade-in zoom-in-95"
               >
                 <img src={project.imageUrl || "https://placehold.co/600x400/111/444.png?text=Sem+Capa"} alt="Cover" className="w-full h-32 object-cover rounded-lg mb-2 bg-neutral-800" />
-                <p className="text-xs text-neutral-300 line-clamp-2 leading-relaxed">{project.description}</p>
+                <p className="text-xs text-neutral-300 line-clamp-2 leading-relaxed whitespace-normal">{project.description}</p>
                 <Tooltip.Arrow className="fill-neutral-900" />
               </Tooltip.Content>
             </Tooltip.Portal>
           </Tooltip.Root>
         </td>
 
-        <td className="py-4 px-4">
+        <td className="py-4 px-4 min-w-[200px]">
           <div className="flex flex-wrap gap-1">
             {project.techs.slice(0, 3).map((tech) => (
               <span key={tech} className="px-2 py-0.5 bg-white/5 border border-white/10 rounded-md text-xs text-neutral-400">
@@ -80,7 +80,7 @@ export default function SortableProjectRow({
           )}
         </td>
 
-        <td className="py-4 px-4 text-center">
+        <td className="py-4 px-4 text-center whitespace-nowrap">
           <button
             onClick={() => onToggle(project.id)}
             disabled={loadingId === project.id}
@@ -95,7 +95,7 @@ export default function SortableProjectRow({
           </button>
         </td>
 
-        <td className="py-4 px-4">
+        <td className="py-4 px-4 whitespace-nowrap">
           <div className="flex items-center justify-end gap-2">
             <Link
               href={`/admin/projects/${project.id}/edit`}

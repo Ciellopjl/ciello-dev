@@ -101,15 +101,15 @@ export default function ProjectTable({ projects: initialProjects, onRefresh }: P
     <>
       <div className="overflow-x-auto">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[700px] text-sm">
             <thead>
               <tr className="text-left border-b border-white/5">
                 <th className="pb-3 pl-4 pr-2 w-10"></th>
-                <th className="pb-3 px-4 text-neutral-500 font-medium">Título</th>
-                <th className="pb-3 px-4 text-neutral-500 font-medium text-right md:text-left">Techs</th>
-                <th className="hidden md:table-cell pb-3 px-4 text-neutral-500 font-medium text-center">Destaque</th>
-                <th className="pb-3 px-4 text-neutral-500 font-medium text-center">Status</th>
-                <th className="pb-3 px-4 text-neutral-500 font-medium text-right">Ações</th>
+                <th className="pb-3 px-4 text-neutral-500 font-medium whitespace-nowrap">Título</th>
+                <th className="pb-3 px-4 text-neutral-500 font-medium text-right md:text-left whitespace-nowrap">Techs</th>
+                <th className="hidden md:table-cell pb-3 px-4 text-neutral-500 font-medium text-center whitespace-nowrap">Destaque</th>
+                <th className="pb-3 px-4 text-neutral-500 font-medium text-center whitespace-nowrap">Status</th>
+                <th className="pb-3 px-4 text-neutral-500 font-medium text-right whitespace-nowrap">Ações</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">

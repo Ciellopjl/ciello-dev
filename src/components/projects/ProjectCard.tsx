@@ -1,116 +1,145 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ExternalLink, Github, CheckCircle2 } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
+import type { Project } from "@/types/project";
+import { TECH_ICONS } from "@/constants/techs";
 
 interface ProjectCardProps {
-  project: {
-    id: string;
-    name: string;
-    description: string;
-    highlights: string[];
-    tech: string[];
-    link: string;
-    github: string;
-    image: string;
-    featured?: boolean;
-  };
+  project: Project;
+  index: number;
 }
 
-export default function ProjectCard({ project }: ProjectCardProps) {
+export default function ProjectCard({ project, index }: ProjectCardProps) {
+  const isEven = index % 2 === 0;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
+    <motion.section
+      initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className={cn(
-        "group relative glass-premium rounded-[3rem] overflow-hidden transition-all duration-700 hover:border-red-500/40 hover:shadow-2xl hover:shadow-red-500/10 hover:glow-red",
-        project.featured ? "lg:col-span-2" : "col-span-1"
-      )}
+      viewport={{ once: true, margin: "-100px" }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      className="relative w-full"
     >
-      <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] h-full">
-        {/* Project Content */}
-        <div className="p-8 md:p-12 flex flex-col">
+      <div className={cn(
+        "flex flex-col gap-12 xl:gap-24 items-center",
+        isEven ? "xl:flex-row" : "xl:flex-row-reverse"
+      )}>
+        {/* Lado do Conteúdo */}
+        <div className="flex-[0.8] space-y-8 w-full">
+          {/* Badge destaque */}
           {project.featured && (
-            <span className="inline-block mb-4 px-3 py-1 bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-widest rounded-full">
-              Destaque Principal
-            </span>
+            <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left duration-700">
+               <span className="w-8 h-[1px] bg-red-500/50" />
+               <span className="px-4 py-1.5 bg-red-600/10 text-red-600 text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-red-500/20 backdrop-blur-sm">
+                  DESTAQUE PRINCIPAL
+               </span>
+            </div>
           )}
-          <h3 className="text-3xl font-black mb-4 group-hover:text-red-500 transition-colors tracking-tight">
-            {project.name}
-          </h3>
-          <p className="text-muted-foreground mb-8 text-lg">
+
+          <div className="space-y-4">
+             {/* Título em vermelho */}
+            <h2 className="text-[#dc2626] font-black text-2xl xl:text-4xl tracking-tighter leading-none uppercase">
+              {project.title}
+            </h2>
+            <div className="h-1 w-20 bg-red-600/20 rounded-full" />
+          </div>
+
+          {/* Descrição */}
+          <p className="text-neutral-400 text-lg leading-relaxed max-w-xl font-medium">
             {project.description}
           </p>
 
-          <div className="space-y-3 mb-8 flex-grow">
-             {project.highlights.map((highlight) => (
-              <div key={highlight} className="flex items-start gap-2 text-sm text-neutral-400 group-hover:text-neutral-300 transition-colors">
-                <CheckCircle2 size={16} className="text-red-500 shrink-0 mt-0.5" />
-                <span>{highlight}</span>
-              </div>
+          {/* Features com bullet vermelho */}
+          <ul className="space-y-4 pt-2">
+            {project.features.map((feature) => (
+              <li key={feature} className="flex items-start gap-4 text-neutral-300 font-semibold group/item">
+                <span className="text-[#dc2626] text-xl leading-none mt-0.5 group-hover:scale-125 transition-transform duration-300">●</span>
+                <span className="text-base xl:text-lg">{feature}</span>
+              </li>
             ))}
+          </ul>
+
+          {/* Badges de techs */}
+          <div className="flex flex-wrap gap-2 pt-6">
+            {project.techs.map((tech) => {
+              const iconUrl = TECH_ICONS[tech.toLowerCase()];
+              return (
+                <span 
+                  key={tech} 
+                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-neutral-400 uppercase tracking-widest hover:bg-neutral-800 hover:text-white hover:border-red-600/30 transition-all cursor-default backdrop-blur-md flex items-center gap-2"
+                >
+                  {iconUrl && (
+                    <img src={iconUrl} alt={tech} className="w-4 h-4 object-contain opacity-70 group-hover:opacity-100 transition-opacity" />
+                  )}
+                  {tech}
+                </span>
+              );
+            })}
           </div>
 
-           <div className="flex flex-wrap gap-2 mb-10">
-            {project.tech.map((t) => (
-              <span key={t} className="px-3 py-1 bg-white/5 rounded-lg text-xs font-bold border border-white/10 text-neutral-300 group-hover:border-red-500/30 transition-colors">
-                {t}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex items-center gap-4">
-             <a
-              href={project.link}
-              onClick={() => trackEvent('click', 'projeto', `ver_${project.name}`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3 bg-red-600 text-white rounded-full font-bold flex items-center gap-2 hover:bg-red-500 transition-all hover:scale-105 active:scale-95 shadow-lg shadow-red-600/20"
-            >
-              <ExternalLink size={18} />
-              Ver Projeto
-            </a>
-             <a
-              href={project.github}
-              onClick={() => trackEvent('click', 'projeto', `github_${project.name}`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-12 h-12 glass rounded-full flex items-center justify-center hover:bg-white/10 transition-all hover:scale-105 active:scale-95 text-neutral-400 hover:text-white"
-            >
-              <Github size={20} />
-            </a>
+          {/* Botões */}
+          <div className="flex flex-wrap items-center gap-6 pt-8">
+            {project.liveUrl && (
+              <a 
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('click', 'projeto', `ver_${project.title}`)}
+                className="px-8 py-5 bg-red-600 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-red-700 transition-all active:scale-95 shadow-[0_15px_40px_-10px_rgba(220,38,38,0.4)] border border-red-500/20 flex items-center gap-3 group"
+              >
+                VER PROJETO
+                <ExternalLink size={16} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              </a>
+            )}
+            {project.githubUrl && (
+              <a 
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('click', 'projeto', `github_${project.title}`)}
+                className="w-16 h-16 rounded-2xl border border-white/10 flex items-center justify-center text-neutral-500 hover:text-white hover:bg-white/5 transition-all active:scale-95 group hover:border-white/20"
+              >
+                <Github size={28} className="group-hover:scale-110 transition-transform" />
+              </a>
+            )}
           </div>
         </div>
 
-        {/* Project Image Preview */}
-        <div className="relative bg-[#050505] p-0 flex items-center justify-center min-h-[500px] lg:min-h-full overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-red-600/15 to-transparent pointer-events-none z-10" />
-          <div className="absolute inset-0 vignette-overlay pointer-events-none z-10" />
-          
+        {/* Lado direito — mockup */}
+        <div className="flex-1 w-full group relative">
           <motion.div 
-            whileHover={{ y: -20, scale: 1.08 }}
-            transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
-            className="relative w-full h-full flex items-center justify-center z-20 p-8 lg:p-12"
+            whileHover={{ y: -10 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="relative aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#0a0a0a]"
           >
-             <div className="mockup-glow" />
-             <div className="relative rounded-2xl overflow-hidden glass border border-white/5 shadow-2xl transition-all duration-700 group-hover:border-red-500/50 group-hover:shadow-[0_0_100px_rgba(239,68,68,0.2)]">
-               <img
-                  src={project.image}
-                  alt={project.name}
-                  className={cn(
-                    "w-auto h-auto transition-all duration-700 group-hover:scale-115",
-                    "max-h-[450px] md:max-h-[650px] lg:max-h-[850px] object-contain",
-                    "opacity-95 group-hover:opacity-100 drop-shadow-[0_20px_80px_rgba(0,0,0,0.8)]"
-                  )}
-               />
-               <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500" />
+             {/* Browser Header Mockup */}
+             <div className="h-10 bg-[#121212] border-b border-white/5 flex items-center px-6 gap-2 z-20 relative">
+                <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+                <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+                <div className="w-3 h-3 rounded-full bg-[#27c93f]" />
+                <div className="ml-6 h-5 w-full max-w-[220px] bg-white/5 rounded-lg border border-white/5" />
              </div>
+
+             <div className="relative w-full h-full overflow-hidden bg-[#050505]">
+                <img 
+                  src={project.imageUrl} 
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
+             </div>
+
+             {/* Inner Glow */}
+             <div className="absolute inset-0 border-[0.5px] border-white/10 rounded-3xl pointer-events-none" />
           </motion.div>
+
+           {/* Decorative Background Glow */}
+           <div className="absolute -inset-10 bg-red-600/10 blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none -z-10" />
         </div>
       </div>
-    </motion.div>
+    </motion.section>
   );
 }

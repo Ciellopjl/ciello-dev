@@ -6,9 +6,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const session = await auth();
-  const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
-  
-  if (!session || session.user?.email !== ADMIN_EMAIL) {
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const sessionEmail = session?.user?.email?.trim().toLowerCase();
+
+  if (!session || !sessionEmail || sessionEmail !== adminEmail) {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 

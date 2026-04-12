@@ -17,22 +17,16 @@ export default async function Projects() {
         <h3 className="text-4xl font-bold tracking-tight">Soluções reais para <br /> <span className="text-muted-foreground">desafios complexos.</span></h3>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={{
-            id: project.id,
-            name: project.title,
-            description: project.description,
-            highlights: project.features,
-            tech: project.techs,
-            link: project.liveUrl ?? "#",
-            github: project.githubUrl ?? "#",
-            image: project.imageUrl,
-            featured: project.featured
-          }} />
+      <div className="flex flex-col gap-24 lg:gap-40 max-w-6xl mx-auto">
+        {projects.map((project, index) => (
+          <ProjectCard 
+            key={project.id} 
+            index={index}
+            project={project} 
+          />
         ))}
         {projects.length === 0 && (
-          <p className="text-neutral-500 text-center col-span-1 lg:col-span-2 py-10">
+          <p className="text-neutral-500 text-center py-10">
             Nenhum projeto publicado no momento.
           </p>
         )}

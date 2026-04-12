@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   const session = await auth();
-  const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const sessionEmail = session?.user?.email?.trim().toLowerCase();
   
-  if (!session || session.user?.email !== ADMIN_EMAIL) {
+  if (!session || !sessionEmail || sessionEmail !== adminEmail) {
     return NextResponse.json({ error: "Acesso negado" }, { status: 403 });
   }
 

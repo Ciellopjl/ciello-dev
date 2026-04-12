@@ -5,7 +5,7 @@ import "@/lib/env";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import "@uploadthing/react/styles.css";
+
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleAnalytics } from "@next/third-parties/google";
@@ -37,9 +37,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased selection:bg-red-500/30`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-screen bg-black flex flex-col">
         {children}
         <AnalyticsTracker />
         <CookieNotice />

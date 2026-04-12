@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, X, Trash2 } from "lucide-react";
-import { UploadDropzone } from "@/lib/uploadthing";
+import { Plus, X, Trash2, Sparkles, Loader2 } from "lucide-react";
+import { CldUploadWidget } from "next-cloudinary";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import type { ProjectFormData } from "@/types/project";
 
 interface ProjectFormFieldsProps {
@@ -14,6 +15,49 @@ interface ProjectFormFieldsProps {
 export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsProps) {
   const [techInput, setTechInput] = useState("");
   const [featureInput, setFeatureInput] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  async function handleRefineAI() {
+    if (form.features.length === 0) {
+      toast.error("Adicione algumas funcionalidades primeiro para eu organizar!");
+      return;
+    }
+
+    setIsGenerating(true);
+    const promise = fetch("/api/admin/ai/generate-suggestions", {
+      method: "POST",
+      body: JSON.stringify({ 
+        title: form.title, 
+        description: form.description, 
+        currentFeatures: form.features,
+        type: "refine" 
+      }),
+    }).then(async (res) => {
+      if (!res.ok) throw new Error("Erro na IA");
+      const data = await res.json();
+      
+      setForm(f => ({
+        ...f,
+        features: data.features || f.features
+      }));
+
+      return data;
+    });
+
+    toast.promise(promise, {
+      loading: "Organizando funcionalidades...",
+      success: "Funcionalidades organizadas!",
+      error: "Falha ao organizar.",
+    });
+
+    try {
+      await promise;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsGenerating(false);
+    }
+  }
 
   function addTag(field: "techs" | "features", input: string, setInput: (v: string) => void) {
     const value = input.trim();
@@ -35,23 +79,30 @@ export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsPr
         <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Informações Básicas
         </h2>
-        <div className="space-y-4">
-          <input
-            type="text"
-            required
-            value={form.title}
-            onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-            placeholder="Título do Projeto"
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50"
-          />
-          <textarea
-            required
-            rows={4}
-            value={form.description}
-            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-            placeholder="Descrição do projeto..."
-            className="w-full px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50 resize-none"
-          />
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Título</label>
+            <input
+              type="text"
+              required
+              value={form.title}
+              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              placeholder="Ex: Plataforma de E-commerce"
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50 transition-all font-medium"
+            />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Descrição</label>
+            <textarea
+              required
+              rows={4}
+              value={form.description}
+              onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+              placeholder="Descreva o projeto (principais desafios e soluções)..."
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50 resize-none transition-all"
+            />
+          </div>
         </div>
       </div>
 
@@ -70,15 +121,66 @@ export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsPr
             </div>
           </div>
         ) : (
-          <UploadDropzone
-            endpoint="imageUploader"
-            onClientUploadComplete={(res) => {
-              setForm((f) => ({ ...f, imageUrl: res[0].url }));
-              toast.success("Imagem enviada!");
+          <CldUploadWidget 
+            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+            onSuccess={(result: any) => {
+              if (result.info && typeof result.info === "object") {
+                setForm((f) => ({ ...f, imageUrl: result.info.secure_url }));
+                toast.success("Imagem enviada!");
+              }
             }}
-            onUploadError={(error: Error) => { toast.error(error.message); }}
-          />
+            options={{
+              maxFiles: 1,
+              resourceType: "image",
+              clientAllowedFormats: ["jpg", "png", "webp", "jpeg"],
+            }}
+          >
+            {({ open }) => (
+              <button
+                type="button"
+                onClick={() => open()}
+                className="w-full aspect-video border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-4 hover:border-red-500/50 hover:bg-white/[0.02] transition-all group animate-in fade-in duration-500"
+              >
+                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Plus size={24} className="text-neutral-500 group-hover:text-red-500" />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-bold text-white">Upload da Capa</p>
+                  <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">Clique para selecionar</p>
+                </div>
+              </button>
+            )}
+          </CldUploadWidget>
         )}
+      </div>
+
+      {/* Links */}
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 md:p-6 space-y-5">
+        <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+          <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Links & Acessos
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">GitHub URL</label>
+            <input
+              type="url"
+              value={form.githubUrl || ""}
+              onChange={(e) => setForm((f) => ({ ...f, githubUrl: e.target.value }))}
+              placeholder="https://github.com/..."
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50 transition-all"
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1">Live Demo URL</label>
+            <input
+              type="url"
+              value={form.liveUrl || ""}
+              onChange={(e) => setForm((f) => ({ ...f, liveUrl: e.target.value }))}
+              placeholder="https://projeto.com..."
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50 transition-all"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Techs & Features - Simplified for brevity in Fields component */}
@@ -101,9 +203,22 @@ export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsPr
          </div>
          {/* Features */}
          <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 space-y-4">
-            <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Funcionalidades
-            </h2>
+            <div className="flex justify-between items-center">
+               <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
+                 <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Funcionalidades
+               </h2>
+               <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                onClick={handleRefineAI}
+                disabled={isGenerating}
+                className="h-7 text-[9px] gap-1.5 border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-400"
+               >
+                 {isGenerating ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}
+                 Organizar com IA
+               </Button>
+            </div>
             <div className="flex gap-2">
               <input type="text" value={featureInput} onChange={(e) => setFeatureInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag("features", featureInput, setFeatureInput))} className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm" placeholder="Adicionar..." />
               <button type="button" onClick={() => addTag("features", featureInput, setFeatureInput)} className="p-2 bg-white/5 rounded-lg"><Plus size={16} /></button>

@@ -14,8 +14,9 @@ const authConfig: NextAuthConfig = {
   callbacks: {
     jwt({ token, user }) {
       if (user) {
+        const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
         token.email = user.email;
-        token.isAdmin = user.email === process.env.ADMIN_EMAIL;
+        token.isAdmin = user.email?.trim().toLowerCase() === adminEmail;
       }
       return token;
     },

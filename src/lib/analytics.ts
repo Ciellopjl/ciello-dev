@@ -2,12 +2,6 @@
 
 // Utility for custom event tracking
 export function trackEvent(action: string, category: string, label?: string) {
-  // Only track in production and if consent exists
-  if (process.env.NODE_ENV !== 'production') return;
-  
-  const consent = typeof window !== 'undefined' ? localStorage.getItem("cookie-consent") : null;
-  if (!consent) return;
-
   // 1. Google Analytics
   if (typeof window !== 'undefined' && (window as any).gtag) {
     (window as any).gtag('event', action, {

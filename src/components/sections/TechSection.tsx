@@ -1,29 +1,9 @@
 "use client";
 
 import SectionContainer from "@/components/ui/SectionContainer";
-import { TECH_STACK } from "@/constants/techs";
+import { TECH_STACK, TECH_ICONS } from "@/constants/techs";
 import { motion } from "framer-motion";
 import { Layout, Server, Database, Code2 } from "lucide-react";
-
-// Real image logos map
-const imageMap: Record<string, string> = {
-  html5: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg",
-  css3: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg",
-  wind: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg",
-  javascript: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg",
-  typescript: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg",
-  react: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg",
-  nextjs: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg",
-  motion: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/framermotion/framermotion-original.svg",
-  node: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg",
-  lock: "https://next-auth.js.org/img/logo/logo-sm.png", // NextAuth logo
-  prisma: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prisma/prisma-original.svg",
-  layers: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/babel/babel-original.svg", // Using Babel icon as generic middleware vibe
-  database: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg",
-  postgres: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg",
-  sqlite: "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sqlite/sqlite-original.svg",
-  neon: "https://avatars.githubusercontent.com/u/74304851?s=200&v=4", // Neon DB official avatar
-};
 
 export default function Technologies() {
   const categories = [
@@ -59,7 +39,7 @@ export default function Technologies() {
             </div>
             <div className="flex flex-wrap gap-4">
               {cat.data.map((tech) => {
-                const imageUrl = imageMap[tech.icon];
+                const imageUrl = TECH_ICONS[tech.icon] || TECH_ICONS[tech.name.toLowerCase()];
                 
                 return (
                   <div 

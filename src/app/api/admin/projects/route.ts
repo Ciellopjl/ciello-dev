@@ -10,7 +10,12 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 // ─── Auth Guard ──────────────────────────────────────────────────────────────
 async function checkAuth() {
   const session = await auth();
-  if (!session || session.user?.email !== ADMIN_EMAIL) {
+  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const sessionEmail = session?.user?.email?.trim().toLowerCase();
+
+  console.log(`[API AUTH] Checking: ${sessionEmail} vs ${adminEmail}`);
+
+  if (!session || !sessionEmail || sessionEmail !== adminEmail) {
     return null;
   }
   return session;
@@ -46,6 +51,8 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json();
+    console.log("[POST /api/admin/projects] Received payload:", JSON.stringify(body, null, 2));
+    
     const { title, description, features, techs, liveUrl, githubUrl, imageUrl, featured, published, order } = body;
 
     // Basic validation
