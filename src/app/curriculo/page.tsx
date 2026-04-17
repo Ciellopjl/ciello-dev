@@ -7,12 +7,24 @@ export const metadata: Metadata = {
 
 export default function CurriculoPage() {
   return (
-    <div className="fixed inset-0 bg-background z-[100]">
-      <iframe
-        src="/curriculo.pdf#toolbar=0"
+    <div className="fixed inset-0 bg-background z-[100] flex flex-col">
+      <object
+        data="/curriculo.pdf"
+        type="application/pdf"
         className="w-full h-full border-none"
-        title="Currículo Ciello Victor"
-      />
+      >
+        <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
+          <p className="text-xl font-bold">Não foi possível visualizar o PDF diretamente.</p>
+          <p className="text-neutral-400">Seu navegador pode estar bloqueando a visualização. Use o botão abaixo para baixar ou abrir em outra aba.</p>
+          <a 
+            href="/curriculo.pdf" 
+            target="_blank"
+            className="px-6 py-3 bg-red-600 text-white rounded-full font-bold"
+          >
+            Abrir Currículo Original
+          </a>
+        </div>
+      </object>
       
       {/* Botão flutuante para voltar ou baixar */}
       <div className="fixed bottom-6 right-6 flex gap-3">
