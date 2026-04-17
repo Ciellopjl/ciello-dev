@@ -77,6 +77,16 @@ export default function Navbar() {
             </motion.a>
           ))}
           <motion.a
+            href={DEVELOPER_INFO.resume}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="px-4 py-2 border border-white/10 text-foreground rounded-full text-sm font-semibold hover:bg-white/5 transition-all"
+          >
+            Currículo
+          </motion.a>
+          <motion.a
             href="#contact"
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -86,13 +96,21 @@ export default function Navbar() {
           </motion.a>
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          className="md:hidden text-foreground"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        {/* Mobile Toggle & Quick Actions */}
+        <div className="md:hidden flex items-center gap-3">
+          <a
+            href={DEVELOPER_INFO.resume}
+            className="px-4 py-1.5 border border-white/10 text-foreground rounded-full text-xs font-bold hover:bg-white/5 transition-all"
+          >
+            Currículo
+          </a>
+          <button
+            className="text-foreground p-2"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu — Side Drawer (70% Width) */}
@@ -166,20 +184,24 @@ export default function Navbar() {
                 </div>
 
                 {/* CTA Action */}
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5 }}
-                  className="mt-10"
-                >
-                  <a 
-                    href="#contact"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full py-4 bg-red-600 text-white rounded-xl flex items-center justify-center font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-red-600/10 active:scale-95 transition-all text-center"
-                  >
-                    Vamos Conversar?
-                  </a>
-                </motion.div>
+                  <div className="grid grid-cols-2 gap-3 mt-10">
+                    <a 
+                      href={DEVELOPER_INFO.resume}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full py-4 bg-white/5 border border-white/10 text-white rounded-xl flex items-center justify-center font-black text-[10px] uppercase tracking-[0.2em] active:scale-95 transition-all text-center"
+                    >
+                      Currículo
+                    </a>
+                    <a 
+                      href="#contact"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="w-full py-4 bg-red-600 text-white rounded-xl flex items-center justify-center font-black text-[10px] uppercase tracking-[0.2em] shadow-xl shadow-red-600/10 active:scale-95 transition-all text-center"
+                    >
+                      Contratar
+                    </a>
+                  </div>
               </div>
 
               {/* Footer socials */}

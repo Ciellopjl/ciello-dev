@@ -80,6 +80,13 @@ export default function Hero() {
               <Github size={20} />
               GitHub
             </a>
+            <a
+              href={DEVELOPER_INFO.resume}
+              onClick={() => trackEvent('click', 'hero', 'curriculo')}
+              className="px-10 py-5 glass rounded-full font-bold flex items-center gap-2 hover:bg-white/5 transition-all hover:scale-105 active:scale-95 text-neutral-200"
+            >
+              Currículo
+            </a>
           </motion.div>
         </div>
 

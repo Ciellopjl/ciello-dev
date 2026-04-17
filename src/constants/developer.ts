@@ -10,4 +10,5 @@ export const DEVELOPER_INFO = {
   linkedin: "https://www.linkedin.com/in/ciello-victor-7aaa6a3ab/",
   profileImage: "/EU.jpeg",
   instagram: "https://www.instagram.com/_ciellopjl/",
+  resume: "/curriculo",
 };
