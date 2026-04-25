@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     console.log("[POST /api/admin/projects] Received payload:", JSON.stringify(body, null, 2));
     
-    const { title, description, features, techs, liveUrl, githubUrl, imageUrl, featured, published, order } = body;
+    const { title, description, features, techs, liveUrl, githubUrl, imageUrl, videoUrl, featured, published, order } = body;
 
     // Basic validation
     if (!title || !description || !imageUrl) {
@@ -72,6 +72,7 @@ export async function POST(request: Request) {
         liveUrl: liveUrl || null,
         githubUrl: githubUrl || null,
         imageUrl,
+        videoUrl: videoUrl || null,
         featured: featured ?? false,
         published: published ?? false,
         order: order ?? 0,

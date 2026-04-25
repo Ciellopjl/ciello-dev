@@ -45,3 +45,4 @@ next-env.d.ts
 .env.*.local
 scripts/encrypt-env.ts
 
+.vercel

@@ -19,6 +19,7 @@ const emptyForm: ProjectFormData = {
   title: "",
   description: "",
   imageUrl: "",
+  videoUrl: "",
   liveUrl: "",
   githubUrl: "",
   techs: [],

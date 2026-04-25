@@ -21,6 +21,7 @@ model Project {
   liveUrl     String?
   githubUrl   String?
   imageUrl    String
+  videoUrl    String?
   featured    Boolean  @default(false)
   published   Boolean  @default(false)
   order       Int      @default(0)

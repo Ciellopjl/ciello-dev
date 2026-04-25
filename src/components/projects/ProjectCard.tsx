@@ -124,11 +124,22 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
              </div>
 
              <div className="relative w-full h-full overflow-hidden bg-[#050505]">
-                <img 
-                  src={project.imageUrl} 
-                  alt={project.title}
-                  className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100"
-                />
+                {project.videoUrl ? (
+                  <video 
+                    src={project.videoUrl} 
+                    className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" 
+                    autoPlay 
+                    muted 
+                    loop 
+                    playsInline 
+                  />
+                ) : (
+                  <img 
+                    src={project.imageUrl} 
+                    alt={project.title}
+                    className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110 opacity-80 group-hover:opacity-100"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60" />
              </div>
 

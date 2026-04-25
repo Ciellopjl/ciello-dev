@@ -86,17 +86,26 @@ export default function ProjectPreview({ form }: ProjectPreviewProps) {
                    <div className="w-2 h-2 rounded-full bg-[#ffbd2e]" />
                    <div className="w-2 h-2 rounded-full bg-[#27c93f]" />
                 </div>
-                <div className="flex-1 relative flex items-center justify-center overflow-hidden">
-                   {form.imageUrl ? (
+                 <div className="flex-1 relative flex items-center justify-center overflow-hidden bg-black">
+                    {form.videoUrl ? (
+                      <video 
+                        src={form.videoUrl} 
+                        className="w-full h-full object-cover" 
+                        autoPlay 
+                        muted 
+                        loop 
+                        playsInline 
+                      />
+                    ) : form.imageUrl ? (
                       <img src={form.imageUrl} alt="Card Preview" className="w-full h-full object-cover" />
                     ) : (
                       <div className="flex flex-col items-center gap-2 text-neutral-700">
                         <ImageIcon size={32} strokeWidth={1} />
-                        <span className="text-[8px] font-bold uppercase tracking-widest">Aguardando Imagem</span>
+                        <span className="text-[8px] font-bold uppercase tracking-widest">Aguardando Mídia</span>
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
-                </div>
+                 </div>
              </div>
              
              {/* Background Glow */}

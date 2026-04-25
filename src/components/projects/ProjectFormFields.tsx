@@ -106,52 +106,119 @@ export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsPr
         </div>
       </div>
 
-      {/* Media */}
-      <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 md:p-6 space-y-5">
+      {/* Media Section */}
+      <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-4 md:p-6 space-y-8">
         <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
           <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Imagens & Mídia
         </h2>
-        {form.imageUrl ? (
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 group">
-            <img src={form.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <button type="button" onClick={() => setForm((f) => ({ ...f, imageUrl: "" }))} className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-xl text-sm font-bold">
-                <Trash2 size={16} /> Remover
-              </button>
+        
+        {/* Imagem de Capa */}
+        <div className="space-y-4">
+          <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1 opacity-70">Imagem de Capa (Obrigatória)</label>
+          {form.imageUrl ? (
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 group bg-black/40">
+              <img src={form.imageUrl} alt="Preview" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <button type="button" onClick={() => setForm((f) => ({ ...f, imageUrl: "" }))} className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-all">
+                  <Trash2 size={16} /> Remover Capa
+                </button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <CldUploadWidget 
-            uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-            onSuccess={(result: any) => {
-              if (result.info && typeof result.info === "object") {
-                setForm((f) => ({ ...f, imageUrl: result.info.secure_url }));
-                toast.success("Imagem enviada!");
-              }
-            }}
-            options={{
-              maxFiles: 1,
-              resourceType: "image",
-              clientAllowedFormats: ["jpg", "png", "webp", "jpeg"],
-            }}
-          >
-            {({ open }) => (
-              <button
-                type="button"
-                onClick={() => open()}
-                className="w-full aspect-video border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-4 hover:border-red-500/50 hover:bg-white/[0.02] transition-all group animate-in fade-in duration-500"
+          ) : (
+            <CldUploadWidget 
+              uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+              onSuccess={(result: any) => {
+                if (result.info && typeof result.info === "object") {
+                  setForm((f) => ({ ...f, imageUrl: result.info.secure_url }));
+                  toast.success("Imagem enviada!");
+                }
+              }}
+              options={{ maxFiles: 1, resourceType: "image" }}
+            >
+              {({ open }) => (
+                <button
+                  type="button"
+                  onClick={() => open()}
+                  className="w-full aspect-video border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-4 hover:border-red-500/50 hover:bg-white/[0.02] transition-all group"
+                >
+                  <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Plus size={24} className="text-neutral-500 group-hover:text-red-500" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-white">Upload da Capa</p>
+                    <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">Clique para selecionar</p>
+                  </div>
+                </button>
+              )}
+            </CldUploadWidget>
+          )}
+        </div>
+
+        {/* Vídeo do Projeto */}
+        <div className="space-y-4 pt-8 border-t border-white/5">
+          <label className="text-[10px] font-bold text-neutral-500 uppercase tracking-widest ml-1 opacity-70">Vídeo de Demonstração (Opcional)</label>
+          
+          <div className="space-y-4">
+            <input
+              type="url"
+              value={form.videoUrl || ""}
+              onChange={(e) => setForm((f) => ({ ...f, videoUrl: e.target.value }))}
+              placeholder="Cole o link do vídeo (MP4 direto)..."
+              className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm focus:outline-none focus:border-red-500/50 transition-all font-medium"
+            />
+            
+            {form.videoUrl ? (
+               <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-white/10 bg-black group">
+                 <video 
+                   src={form.videoUrl} 
+                   className="w-full h-full object-contain" 
+                   autoPlay 
+                   muted 
+                   loop 
+                   playsInline 
+                 />
+                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <button 
+                      type="button" 
+                      onClick={() => setForm((f) => ({ ...f, videoUrl: "" }))}
+                      className="flex items-center gap-2 px-6 py-2 bg-red-600 text-white rounded-xl text-sm font-bold hover:bg-red-700 transition-all"
+                    >
+                      <Trash2 size={16} /> Remover Vídeo
+                    </button>
+                 </div>
+               </div>
+            ) : (
+              <CldUploadWidget 
+                uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
+                onSuccess={(result: any) => {
+                  if (result.info && typeof result.info === "object") {
+                    setForm((f) => ({ ...f, videoUrl: result.info.secure_url }));
+                    toast.success("Vídeo enviado!");
+                  }
+                }}
+                onError={(err) => {
+                   console.error("Cloudinary Error:", err);
+                   toast.error("Erro no upload do vídeo.");
+                }}
+                options={{
+                  maxFiles: 1,
+                  resourceType: "auto",
+                }}
               >
-                <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Plus size={24} className="text-neutral-500 group-hover:text-red-500" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-white">Upload da Capa</p>
-                  <p className="text-[10px] text-neutral-500 uppercase tracking-widest mt-1">Clique para selecionar</p>
-                </div>
-              </button>
+                {({ open }) => (
+                  <button
+                    type="button"
+                    onClick={() => open()}
+                    className="w-full py-6 border-2 border-dashed border-white/10 rounded-2xl flex flex-col items-center justify-center gap-2 hover:border-red-500/50 hover:bg-white/[0.02] transition-all group"
+                  >
+                    <Plus size={20} className="text-neutral-500 group-hover:text-red-500" />
+                    <p className="text-xs font-bold text-neutral-400 group-hover:text-white transition-colors">Fazer upload de um vídeo</p>
+                  </button>
+                )}
+              </CldUploadWidget>
             )}
-          </CldUploadWidget>
-        )}
+          </div>
+        </div>
       </div>
 
       {/* Links */}

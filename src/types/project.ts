@@ -3,6 +3,7 @@ export interface Project {
   title: string;
   description: string;
   imageUrl: string;
+  videoUrl: string | null;
   techs: string[];
   features: string[];
   liveUrl: string | null;
@@ -17,6 +18,7 @@ export interface ProjectFormData {
   title: string;
   description: string;
   imageUrl: string;
+  videoUrl: string | null;
   liveUrl: string | null;
   githubUrl: string | null;
   techs: string[];
