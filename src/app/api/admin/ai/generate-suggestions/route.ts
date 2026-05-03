@@ -7,6 +7,15 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+interface SuggestionRequest {
+  title?: string;
+  description?: string;
+  currentFeatures?: string[];
+  type?: "suggest" | "refine";
+  githubUrl?: string;
+  pastedText?: string;
+}
+
 export async function POST(req: Request) {
   try {
     const session = await auth();
@@ -14,7 +23,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, currentFeatures, type = "suggest", githubUrl, pastedText } = await req.json();
+    const { 
+      title, 
+      description, 
+      currentFeatures, 
+      type = "suggest", 
+      githubUrl, 
+      pastedText 
+    }: SuggestionRequest = await req.json();
 
     if (!title && !description && (!currentFeatures || currentFeatures.length === 0) && !githubUrl && !pastedText) {
       return NextResponse.json({ error: "Missing required data" }, { status: 400 });
@@ -26,7 +42,9 @@ export async function POST(req: Request) {
     // Se houver um GitHub URL, tentamos buscar o README para dar mais contexto
     if (githubUrl && githubUrl.toLowerCase().includes("github")) {
       try {
-        let owner, repo;
+        let owner: string | undefined;
+        let repo: string | undefined;
+        
         const match = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
         
         if (match) {
@@ -35,7 +53,7 @@ export async function POST(req: Request) {
         } else {
           // Fallback para outros formatos (ex: raw.githubusercontent.com)
           const parts = githubUrl.split("/");
-          const githubIdx = parts.findIndex(p => p.includes("github"));
+          const githubIdx = parts.findIndex((p: string) => p.includes("github"));
           if (githubIdx !== -1 && parts.length > githubIdx + 2) {
             owner = parts[githubIdx + 1];
             repo = parts[githubIdx + 2].replace(".git", "").split("#")[0].split("?")[0];
@@ -46,15 +64,18 @@ export async function POST(req: Request) {
           const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
             headers: {
               Accept: "application/vnd.github.v3.raw",
-            }
+              "User-Agent": "Portfolio-AI-Assistant"
+            },
+            next: { revalidate: 3600 } // Cache do README por 1 hora
           });
+          
           if (readmeRes.ok) {
             const readmeText = await readmeRes.text();
-            context = `\nConteúdo do README do GitHub:\n${readmeText.slice(0, 5000)}`;
+            context = `\nConteúdo do README do GitHub (contexto técnico):\n${readmeText.slice(0, 5000)}`;
           }
         }
       } catch (e) {
-        console.error("Error fetching README:", e);
+        console.error("[Senior AI Assistant] Error fetching README:", e);
       }
     }
 
