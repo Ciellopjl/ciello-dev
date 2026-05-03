@@ -5,7 +5,7 @@ import { ExternalLink, Github } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { trackEvent } from "@/lib/analytics";
 import type { Project } from "@/types/project";
-import { TECH_ICONS } from "@/constants/techs";
+import { TECH_ICONS, getTechIcon } from "@/constants/techs";
 
 interface ProjectCardProps {
   project: Project;
@@ -64,20 +64,20 @@ export default function ProjectCard({ project, index }: ProjectCardProps) {
 
           {/* Badges de techs */}
           <div className="flex flex-wrap gap-2 pt-6">
-            {project.techs.map((tech) => {
-              const iconUrl = TECH_ICONS[tech.toLowerCase()];
-              return (
-                <span 
-                  key={tech} 
-                  className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-neutral-400 uppercase tracking-widest hover:bg-neutral-800 hover:text-white hover:border-red-600/30 transition-all cursor-default backdrop-blur-md flex items-center gap-2"
-                >
-                  {iconUrl && (
-                    <img src={iconUrl} alt={tech} className="w-4 h-4 object-contain opacity-70 group-hover:opacity-100 transition-opacity" />
-                  )}
-                  {tech}
-                </span>
-              );
-            })}
+            {project.techs.map((tech) => (
+              <span 
+                key={tech} 
+                className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-neutral-400 uppercase tracking-widest hover:bg-neutral-800 hover:text-white hover:border-red-600/30 transition-all cursor-default backdrop-blur-md flex items-center gap-2"
+              >
+                <img 
+                  src={getTechIcon(tech)} 
+                  alt={tech} 
+                  className="w-4 h-4 object-contain opacity-70 group-hover:opacity-100 transition-opacity" 
+                  onError={(e) => (e.currentTarget.style.display = "none")}
+                />
+                {tech}
+              </span>
+            ))}
           </div>
 
           {/* Botões */}

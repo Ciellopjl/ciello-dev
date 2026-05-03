@@ -10,6 +10,7 @@ import type { Project } from "@/types/project";
 interface SortableProjectRowProps {
   project: Project;
   onToggle: (id: string) => void;
+  onToggleFeatured: (id: string) => void;
   onDeleteRequest: (id: string, title: string) => void;
   loadingId: string | null;
 }
@@ -17,6 +18,7 @@ interface SortableProjectRowProps {
 export default function SortableProjectRow({ 
   project, 
   onToggle, 
+  onToggleFeatured,
   onDeleteRequest, 
   loadingId 
 }: SortableProjectRowProps) {
@@ -73,11 +75,18 @@ export default function SortableProjectRow({
         </td>
 
         <td className="py-4 px-4 text-center">
-          {project.featured ? (
-            <Star size={16} className="text-yellow-500 mx-auto" fill="currentColor" />
-          ) : (
-            <Star size={16} className="text-neutral-700 mx-auto" />
-          )}
+          <button
+            onClick={() => onToggleFeatured(project.id)}
+            disabled={loadingId === project.id}
+            className={`p-2 rounded-lg transition-all ${loadingId === project.id ? "opacity-50 cursor-not-allowed" : "hover:bg-white/10"}`}
+            title={project.featured ? "Remover dos destaques" : "Destacar projeto"}
+          >
+            {project.featured ? (
+              <Star size={16} className="text-yellow-500 mx-auto" fill="currentColor" />
+            ) : (
+              <Star size={16} className="text-neutral-700 mx-auto" />
+            )}
+          </button>
         </td>
 
         <td className="py-4 px-4 text-center whitespace-nowrap">

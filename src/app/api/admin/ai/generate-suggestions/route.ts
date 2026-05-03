@@ -14,18 +14,61 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, currentFeatures, type = "suggest" } = await req.json();
+    const { title, description, currentFeatures, type = "suggest", githubUrl, pastedText } = await req.json();
 
-    if (!title && !description && (!currentFeatures || currentFeatures.length === 0)) {
+    if (!title && !description && (!currentFeatures || currentFeatures.length === 0) && !githubUrl && !pastedText) {
       return NextResponse.json({ error: "Missing required data" }, { status: 400 });
     }
 
     let prompt = "";
+    let context = "";
+
+    // Se houver um GitHub URL, tentamos buscar o README para dar mais contexto
+    if (githubUrl && githubUrl.toLowerCase().includes("github")) {
+      try {
+        let owner, repo;
+        const match = githubUrl.match(/github\.com\/([^/]+)\/([^/]+)/);
+        
+        if (match) {
+          owner = match[1];
+          repo = match[2].replace(".git", "").split("#")[0].split("?")[0];
+        } else {
+          // Fallback para outros formatos (ex: raw.githubusercontent.com)
+          const parts = githubUrl.split("/");
+          const githubIdx = parts.findIndex(p => p.includes("github"));
+          if (githubIdx !== -1 && parts.length > githubIdx + 2) {
+            owner = parts[githubIdx + 1];
+            repo = parts[githubIdx + 2].replace(".git", "").split("#")[0].split("?")[0];
+          }
+        }
+
+        if (owner && repo) {
+          const readmeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+            headers: {
+              Accept: "application/vnd.github.v3.raw",
+            }
+          });
+          if (readmeRes.ok) {
+            const readmeText = await readmeRes.text();
+            context = `\nConteúdo do README do GitHub:\n${readmeText.slice(0, 5000)}`;
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching README:", e);
+      }
+    }
+
+    if (pastedText) {
+      context += `\nTexto adicional colado pelo usuário:\n${pastedText}`;
+    }
+
+    const knownTechs = ["React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "Prisma", "Node.js", "PostgreSQL", "Groq SDK", "Framer Motion", "NextAuth.js", "Supabase", "Stripe", "Cloudinary", "Vercel", "Zod", "Shadcn UI", "Recharts", "Redux", "GraphQL", "Socket.io"];
 
     if (type === "refine") {
       prompt = `
         Você é um especialista em Curadoria de Portfólios e UX. 
         Analise a lista de funcionalidades abaixo de um projeto chamado "${title}" e a sua descrição: "${description}".
+        ${context}
         
         Lista atual: ${JSON.stringify(currentFeatures)}
 
@@ -34,7 +77,6 @@ export async function POST(req: Request) {
         2. Combine funcionalidades semelhantes em um único item mais robusto.
         3. Priorize itens que demonstrem complexidade técnica ou grande valor de negócio.
         4. Use verbos de ação fortes e mantenha cada item com no máximo 60 caracteres.
-        5. O objetivo é impressionar quem está vendo o portfólio, não apenas listar tarefas.
 
         RETORNE APENAS UM JSON NO SEGUINTE FORMATO:
         {
@@ -44,13 +86,14 @@ export async function POST(req: Request) {
     } else {
       prompt = `
         Você é um assistente de portfólio de desenvolvedor. 
-        Analise o título e a descrição do projeto abaixo e sugira:
-        1. Uma lista de tecnologias (apenas nomes, ex: React, Node.js, Tailwind CSS).
+        Analise as informações abaixo e o README (se disponível) e sugira:
+        1. Uma lista de tecnologias (use preferencialmente estes nomes: ${knownTechs.join(", ")}).
         2. Uma lista de funcionalidades (promessas de valor, ex: Autenticação segura com JWT, Dashboard em tempo real).
 
         Projeto:
         Título: ${title}
         Descrição: ${description}
+        ${context}
 
         RETORNE APENAS UM JSON NO SEGUINTE FORMATO:
         {
@@ -58,7 +101,7 @@ export async function POST(req: Request) {
           "features": ["feature1", "feature2"]
         }
 
-        Use tecnologias que você identificar no texto ou que façam sentido para o tipo de projeto descrito.
+        Priorize as tecnologias que estão explicitamente no README ou contexto.
         Seja conciso nas funcionalidades (máximo 60 caracteres por item).
       `;
     }

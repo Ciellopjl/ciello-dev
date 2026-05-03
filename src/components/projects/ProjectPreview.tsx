@@ -2,7 +2,7 @@
 
 import { Image as ImageIcon, ExternalLink, Github } from "lucide-react";
 import type { ProjectFormData } from "@/types/project";
-import { TECH_ICONS } from "@/constants/techs";
+import { TECH_ICONS, getTechIcon } from "@/constants/techs";
 import { cn } from "@/lib/utils";
 
 interface ProjectPreviewProps {
@@ -49,18 +49,26 @@ export default function ProjectPreview({ form }: ProjectPreviewProps) {
 
             {/* Techs Preview */}
             <div className="flex flex-wrap gap-2 pt-4">
-              {form.techs.map((t, i) => {
-                const iconUrl = TECH_ICONS[t.toLowerCase()];
-                return (
-                  <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-2.5 hover:bg-white/10 transition-all cursor-default">
-                    {iconUrl && <img src={iconUrl} alt={t} className="w-4 h-4 object-contain opacity-70" />}
-                    {t}
-                  </span>
-                );
-              })}
+              {form.techs.map((t, i) => (
+                <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-neutral-400 uppercase tracking-widest flex items-center gap-2.5 hover:bg-white/10 transition-all cursor-default">
+                  <img 
+                    src={getTechIcon(t)} 
+                    alt={t} 
+                    className="w-4 h-4 object-contain opacity-70" 
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
+                  {t}
+                </span>
+              ))}
               {form.techs.length === 0 && (
                 ["React", "Next.js", "TypeScript"].map((t, i) => (
                   <span key={i} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-[10px] font-black text-neutral-600 uppercase tracking-widest flex items-center gap-2 opacity-30">
+                    <img 
+                      src={getTechIcon(t)} 
+                      alt={t} 
+                      className="w-4 h-4 object-contain opacity-20 grayscale" 
+                      onError={(e) => (e.currentTarget.style.display = "none")}
+                    />
                     {t}
                   </span>
                 ))

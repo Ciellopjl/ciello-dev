@@ -6,6 +6,7 @@ import { CldUploadWidget } from "next-cloudinary";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import type { ProjectFormData } from "@/types/project";
+import { TECH_ICONS, getTechIcon } from "@/constants/techs";
 
 interface ProjectFormFieldsProps {
   form: ProjectFormData;
@@ -56,6 +57,60 @@ export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsPr
       console.error(error);
     } finally {
       setIsGenerating(false);
+    }
+  }
+
+  const [isSuggesting, setIsSuggesting] = useState(false);
+  const [techPaste, setTechPaste] = useState("");
+  const [showPaste, setShowPaste] = useState(false);
+
+  async function handleSuggestAI(manualText?: string) {
+    const githubUrl = form.githubUrl?.trim();
+    
+    if (!githubUrl && !manualText) {
+      toast.error("Insira um link do GitHub ou cole um texto para eu analisar!");
+      return;
+    }
+
+    setIsSuggesting(true);
+    const promise = fetch("/api/admin/ai/generate-suggestions", {
+      method: "POST",
+      body: JSON.stringify({ 
+        title: form.title, 
+        description: form.description, 
+        githubUrl: githubUrl,
+        pastedText: manualText,
+        type: "suggest" 
+      }),
+    }).then(async (res) => {
+      if (!res.ok) throw new Error("Erro na IA");
+      const data = await res.json();
+      
+      if (data.techs) {
+        setForm(f => ({
+          ...f,
+          techs: Array.from(new Set([...f.techs, ...data.techs])),
+          features: f.features.length === 0 ? data.features : f.features
+        }));
+        setTechPaste("");
+        setShowPaste(false);
+      }
+
+      return data;
+    });
+
+    toast.promise(promise, {
+      loading: "Analisando informações...",
+      success: "Sugestões aplicadas!",
+      error: "Falha ao analisar.",
+    });
+
+    try {
+      await promise;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSuggesting(false);
     }
   }
 
@@ -253,17 +308,68 @@ export default function ProjectFormFields({ form, setForm }: ProjectFormFieldsPr
       {/* Techs & Features - Simplified for brevity in Fields component */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
          <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl p-6 space-y-4">
-            <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Tecnologias
-            </h2>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+               <h2 className="text-xs font-bold text-neutral-500 uppercase tracking-widest flex items-center gap-2 shrink-0">
+                 <div className="w-1.5 h-1.5 rounded-full bg-red-500" /> Tecnologias
+               </h2>
+               <div className="flex flex-wrap gap-2 w-full sm:w-auto justify-end">
+                 <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => setShowPaste(!showPaste)}
+                  className="h-7 px-3 text-[9px] gap-1.5 border-white/10 text-neutral-400 hover:bg-white/5 hover:text-white transition-all whitespace-nowrap"
+                 >
+                   Colar em Massa
+                 </Button>
+                 <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleSuggestAI()}
+                  disabled={isSuggesting}
+                  className="h-7 px-3 text-[9px] gap-1.5 border-red-500/20 text-red-500 hover:bg-red-500/10 hover:text-red-400 transition-all whitespace-nowrap"
+                 >
+                   {isSuggesting ? <Loader2 size={10} className="animate-spin" /> : <Sparkles size={10} />}
+                   Sugerir do GitHub
+                 </Button>
+               </div>
+            </div>
+
+            {showPaste && (
+              <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                <textarea 
+                  value={techPaste}
+                  onChange={(e) => setTechPaste(e.target.value)}
+                  placeholder="Cole aqui o texto do README ou uma lista de tecnologias..."
+                  className="w-full h-32 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-xs focus:outline-none focus:border-red-500/50 resize-none transition-all"
+                />
+                <Button 
+                  type="button"
+                  onClick={() => handleSuggestAI(techPaste)}
+                  disabled={isSuggesting || !techPaste.trim()}
+                  className="w-full h-8 text-[10px] font-bold bg-red-600 hover:bg-red-700"
+                >
+                  Extrair Tecnologias com IA
+                </Button>
+              </div>
+            )}
+
             <div className="flex gap-2">
               <input type="text" value={techInput} onChange={(e) => setTechInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag("techs", techInput, setTechInput))} className="flex-1 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-sm" placeholder="Adicionar..." />
               <button type="button" onClick={() => addTag("techs", techInput, setTechInput)} className="p-2 bg-white/5 rounded-lg"><Plus size={16} /></button>
             </div>
             <div className="flex flex-wrap gap-2">
               {form.techs.map(t => (
-                <span key={t} className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs flex items-center gap-1.5">
-                  {t} <X size={10} className="cursor-pointer" onClick={() => removeTag("techs", t)} />
+                <span key={t} className="px-2 py-1 bg-white/5 border border-white/10 rounded-lg text-xs flex items-center gap-1.5 animate-in zoom-in duration-300 group">
+                  <img 
+                    src={getTechIcon(t)} 
+                    alt={t} 
+                    className="w-3 h-3 object-contain opacity-70 group-hover:opacity-100 transition-opacity" 
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
+                  {t} 
+                  <X size={10} className="cursor-pointer hover:text-red-500 transition-colors" onClick={() => removeTag("techs", t)} />
                 </span>
               ))}
             </div>

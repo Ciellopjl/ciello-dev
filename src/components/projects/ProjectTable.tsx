@@ -46,6 +46,20 @@ export default function ProjectTable({ projects: initialProjects, onRefresh }: P
     }
   };
 
+  const handleToggleFeatured = async (id: string) => {
+    setLoadingId(id);
+    try {
+      const res = await fetch(`/api/admin/projects/${id}/featured`, { method: "PATCH" });
+      if (!res.ok) throw new Error();
+      toast.success("Destaque atualizado!");
+      onRefresh();
+    } catch {
+      toast.error("Erro ao atualizar destaque.");
+    } finally {
+      setLoadingId(null);
+    }
+  };
+
   const confirmDelete = async () => {
     if (!projectToDelete) return;
     setIsDeleteModalOpen(false);
@@ -119,6 +133,7 @@ export default function ProjectTable({ projects: initialProjects, onRefresh }: P
                     key={project.id} 
                     project={project} 
                     onToggle={handleToggle} 
+                    onToggleFeatured={handleToggleFeatured}
                     onDeleteRequest={(id, title) => { setProjectToDelete({ id, title }); setIsDeleteModalOpen(true); }} 
                     loadingId={loadingId} 
                   />

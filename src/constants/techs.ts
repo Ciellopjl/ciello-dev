@@ -58,4 +58,59 @@ export const TECH_ICONS: Record<string, string> = {
   "nextauth": "https://next-auth.js.org/img/logo/logo-sm.png",
   "nextauth.js": "https://next-auth.js.org/img/logo/logo-sm.png",
   "auth": "https://next-auth.js.org/img/logo/logo-sm.png",
+
+  // Adicionais
+  "recharts": "https://recharts.org/favicon.png",
+  "jspdf": "https://raw.githubusercontent.com/parallax/jsPDF/master/docs/images/jspdf-logo.png",
+  "sheetjs": "https://sheetjs.com/favicon.ico",
+  "jspdf & sheetjs": "https://sheetjs.com/favicon.ico",
+  "sonner": "https://sonner.emilkowal.ski/favicon.ico",
+  "middleware": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/backbonejs/backbonejs-original.svg",
+  "vite": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vitejs/vitejs-original.svg",
+  "zod": "https://zod.dev/logo.svg",
+  "shadcn ui": "https://avatars.githubusercontent.com/u/139895814?s=200&v=4",
+  "shadcn": "https://avatars.githubusercontent.com/u/139895814?s=200&v=4",
+  "groq": "https://avatars.githubusercontent.com/u/13251780?s=200&v=4",
+  "groq sdk": "https://avatars.githubusercontent.com/u/13251780?s=200&v=4",
+  "framework": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/backbonejs/backbonejs-original.svg",
+  
+  // Mobile & Outros
+  "flutter": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg",
+  "react native": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg",
+  "expo": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/expo/expo-original.svg",
+  "python": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg",
+  "java": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg",
+  "go": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg",
+  "rust": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg",
+  "c#": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg",
+  "supabase": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg",
+  "stripe": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/stripe/stripe-original.svg",
+  "cloudinary": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cloudinary/cloudinary-original.svg",
+  "vercel": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vercel/vercel-original.svg",
+  "github actions": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg",
+  "redux": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redux/redux-original.svg",
+  "axios": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/axios/axios-plain.svg",
+  "graphql": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/graphql/graphql-plain.svg",
+  "apollo": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/apollo/apollo-original.svg",
+  "radix ui": "https://raw.githubusercontent.com/radix-ui/primitives/main/meta/favicon.ico",
+  "lucide": "https://lucide.dev/favicon.ico",
+  "lucide react": "https://lucide.dev/favicon.ico",
+  "socket.io": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/socketio/socketio-original.svg",
+  "socketio": "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/socketio/socketio-original.svg",
 };
+
+export function getTechIcon(tech: string): string {
+  const normalized = tech.toLowerCase().trim();
+  
+  // Se já estiver no mapeamento manual, retorna ele
+  if (TECH_ICONS[normalized]) return TECH_ICONS[normalized];
+
+  // Caso contrário, tenta gerar um link do Devicon dinamicamente
+  // Remove espaços e pontos para o formato do Devicon
+  const deviconName = normalized
+    .replace(/\.js$/, "js")
+    .replace(/\.ts$/, "ts")
+    .replace(/\s+/g, "");
+
+  return `https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/${deviconName}/${deviconName}-original.svg`;
+}

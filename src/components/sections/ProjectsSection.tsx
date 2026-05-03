@@ -5,7 +5,10 @@ import { prisma } from "@/lib/prisma";
 export default async function Projects() {
   const projects = await prisma.project.findMany({
     where: { published: true },
-    orderBy: { order: "asc" },
+    orderBy: [
+      { order: "asc" },
+      { createdAt: "desc" }
+    ],
   });
 
   return (
